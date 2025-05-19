@@ -45,7 +45,9 @@
    python web2md.py
    ```
 
-脚本将读取 `url.txt` 中的 URL，并将每个网页的内容转换为 Markdown 格式，保存为以 URL 命名的 `.md` 文件（例如，`https_www_example_com.md`）。
+脚本将读取 `url.txt` 中的 URL，并将每个网页的内容转换为 Markdown 格式。
+
+转换后的 Markdown 文件将根据 URL 的一级域名自动存放到相应的文件夹中（例如，`google/index.md` 或 `example/path_to_page.md`）。
 
 ## 注意
 

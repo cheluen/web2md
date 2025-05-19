@@ -18,15 +18,43 @@ def fetch_and_convert(url):
         print(f"Error fetching {url}: {e}")
         return None
 
+import urllib.parse
+
 def save_markdown(url, markdown_content):
-    # Create a safe filename from the URL
-    filename = url.replace("http://", "").replace("https://", "").replace("/", "_").replace(":", "_") + ".md"
     try:
-        with open(filename, "w", encoding="utf-8") as f:
+        # Extract the hostname and create a directory name
+        parsed_url = urllib.parse.urlparse(url)
+        hostname = parsed_url.hostname
+        if not hostname:
+            print(f"Could not parse hostname from {url}")
+            return
+
+        # Use the top-level domain as the directory name
+        domain_parts = hostname.split(".")
+        if len(domain_parts) > 1:
+            directory_name = domain_parts[-2] # Get the part before the last dot (e.g., google from www.google.com)
+        else:
+            directory_name = hostname # Use the whole hostname if no dots
+
+        # Create the directory if it doesn't exist
+        if not os.path.exists(directory_name):
+            os.makedirs(directory_name)
+            print(f"Created directory: {directory_name}")
+
+        # Create a safe filename from the URL path
+        filename = parsed_url.path.replace("/", "_").replace(":", "_")
+        if not filename:
+            filename = "index" # Use 'index' if the path is empty
+
+        full_path = os.path.join(directory_name, filename + ".md")
+
+        with open(full_path, "w", encoding="utf-8") as f:
             f.write(markdown_content)
-        print(f"Saved {url} to {filename}")
+        print(f"Saved {url} to {full_path}")
     except IOError as e:
-        print(f"Error saving {filename}: {e}")
+        print(f"Error saving {url}: {e}")
+    except Exception as e:
+        print(f"An unexpected error occurred while saving {url}: {e}")
 
 def main():
     url_file = "url.txt"
